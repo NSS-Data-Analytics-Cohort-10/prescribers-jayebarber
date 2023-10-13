@@ -1,13 +1,14 @@
 -- 1. 
 --     a. Which prescriber had the highest total number of claims (totaled over all drugs)? Report the npi and the total number of claims.
-SELECT npi, SUM(total_claim_count) AS claim_count_sum
+SELECT npi, SUM(total_claim_count) AS total_drugs
 FROM prescriber
 INNER JOIN prescription
 	USING (npi)
 GROUP BY npi
-ORDER BY SUM(total_claim_count) DESC;
+ORDER By total_drugs DESC
+LIMIT 1;
 
--- ANSWER: Prescriber ID 1912011792/ CLAIM COUNT: 4538
+-- ANSWER: Prescriber ID 1881634483/ CLAIM COUNT: 99707
 
 
     
@@ -26,11 +27,25 @@ ORDER BY sum_total_claim_count DESC;
 
 -- 2. 
 --     a. Which specialty had the most total number of claims (totaled over all drugs)?
-
+SELECT specialty_description, sum(TOTAL_CLAIM_COUNT) AS claim_count_sum
+FROM prescriber
+INNER JOIN prescription
+GROUP BY specialty_description
 
 
 
 --     b. Which specialty had the most total number of claims for opioids?
+SELECT specialty_description, SUM(total_claim_count) AS sum_of_claim_count
+FROM prescriber AS p1
+LEFT JOIN prescription AS p2
+USING (npi)
+LEFT JOIN drug
+USING (drug_name)
+WHERE opioid_drug_flag='Y'
+GROUP BY specialty_description
+ORDER BY SUM(total_claim_count) DESC;
+--- ANSWER: NURSE PRACTITONER/ CLAIM COUNT: 900845
+
 
 --     c. **Challenge Question:** Are there any specialties that appear in the prescriber table that have no associated prescriptions in the prescription table?
 
